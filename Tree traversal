@@ -1,0 +1,73 @@
+#include <iostream>
+
+using namespace std;
+
+class Node{
+    public:
+    int data;
+    Node *left;
+    Node *right;
+    
+    Node(int d){
+        data=d;
+        left=right=NULL;
+    }
+};
+
+// inorder traversal
+void inorder(Node *node){
+    
+    if (node==NULL){
+        return;
+    }
+    inorder(node->left);
+    cout<<node->data<<" ";
+    inorder(node->right);
+    
+}
+
+// preorder traversal
+void preorder(Node *node){
+    if (node==NULL){
+        return;
+    }
+    cout<<node->data<<" ";
+    preorder(node->left);
+    preorder(node->right);
+}
+
+// postorder traversal
+void postorder(Node *node){
+    if (node==NULL){
+        return;
+    }
+    postorder(node->left);
+    postorder(node->right);
+    cout<<node->data<<" ";
+}
+
+// main function
+int main()
+{
+    
+    Node *rootNode=new Node(1);
+    rootNode->left=new Node(2);
+    rootNode->right=new Node(3);
+    rootNode->left->left=new Node(4);
+    rootNode->left->right=new Node(5);
+    
+    
+    cout<<"Inorder traversal of the tree"<<endl;
+    inorder(rootNode);
+    cout<<endl;
+    
+    cout<<"Preorder Traversal of the tree"<<endl;
+    preorder(rootNode);
+    cout<<endl;
+    
+    cout<<"Postorder traversal of the tree"<<endl;
+    postorder(rootNode);
+    cout<<endl;
+
+    return 0;
+}
