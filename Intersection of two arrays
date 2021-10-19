@@ -1,0 +1,33 @@
+#include <iostream>
+using namespace std;
+
+void intersection(int arr1[],int arr2[],int n1,int n2){
+    int p=0;
+    int intersection[n1];
+    for(int i=0;i<n1;i++){
+        for(int j=0;j<n2;j++){
+            if(arr1[i]==arr2[j]){
+                intersection[p]=arr1[i];
+                p++;
+                break;
+            }
+        }
+    }
+    for(int i=0;i<p;i++){
+        cout<<intersection[i]<<" ";
+    }
+}
+
+
+
+int main(){
+    int arr1[]={5,6,7,8,9};
+    int n1=5;
+    int arr2[]={1,2,3,4,5,6};
+    int n2=6;
+    cout<<"intersection array elements are"<<endl;
+    intersection(arr1,arr2,n1,n2);
+    return 0;
+    
+    
+}
