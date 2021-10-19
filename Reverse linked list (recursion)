@@ -1,0 +1,34 @@
+#include <iostream>
+
+using namespace std;
+
+class Node{
+    public:
+    int  data;
+    Node *next;
+    
+    Node(int d){
+        data=d;
+        next=NULL;
+    }
+};
+
+void reverseLinkedList(Node *head){
+    if(head==NULL){
+        return;
+    }
+    reverseLinkedList(head->next);
+    cout<<head->data<<" ";
+}
+
+int main()
+{
+    Node *head=new Node(2);
+    head->next=new Node(3);
+    head->next->next=new Node(4);
+    head->next->next->next=new Node(5);
+    reverseLinkedList(head);
+    
+    
+    return 0;
+}
