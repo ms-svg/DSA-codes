@@ -1,0 +1,157 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Stack{
+	private:
+		int top;
+		int arr[5];
+	public:
+		Stack(){
+			top=-1;
+			for (int i=0;i<5;i++){
+				arr[i]=0;
+			}
+		}
+		
+		bool isEmpty(){
+			if (top==-1){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		
+		bool isFull(){
+			if(top==4){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+		
+		void push(int val){
+			if (top!=5){
+				top=top+1;
+				arr[top]=val;
+			}
+		}
+		
+		int pop(){
+			if (top==-1){
+				cout<<"Underflowed"<<endl;
+				return 0;
+			}
+			else{
+				int popele=arr[top];
+				arr[top]=0;
+				top=top-1;
+				return popele;
+			}
+		}
+		
+		void display(){
+			cout<<"All values in stack are"<<endl;
+			for (int i=4;i>=0;i--){
+				cout<<arr[i]<<endl;
+				
+			}
+		}
+		
+		int peek(){
+			return arr[top];
+		}
+		
+		void change(int val,int pos){
+			if (pos<5){
+				arr[pos]=val;
+				cout<<"The element in stack has been changed"<<endl;
+			}
+			else{
+				cout<<"pos is out of range"<<endl;
+			}
+		}
+		
+		int count(){
+			return (top+1);
+		}
+		
+};
+int main(){
+	Stack s1;
+	int option,pos,val;
+	
+	
+		    
+	do{
+			cout<<"What operation do you want to perform ( choose from 1-9 & press 0 for exit )" <<endl;
+	cout<<"1. PUSH"<<endl;
+	cout<<"2. POP"<<endl;
+	cout<<"3. ISEMPTY"<<endl;
+	cout<<"4. ISFULL"<<endl;
+	cout<<"5. PEEK"<<endl;
+	cout<<"6. COUNT"<<endl;
+	cout<<"7. CHANGE"<<endl;
+	cout<<"8. DISPLAY"<<endl;
+	cout<<"9. CLEAR SCREEN"<<endl;
+	
+	cin>>option;
+	
+	switch(option){
+			case 1:
+			cout<<"Enter any value to add"<<endl;
+			cin>>val;
+			s1.push(val);
+			break;
+		case 2:
+			cout<<"Pop function called"<<s1.pop()<<endl;
+			break;
+		case 3:
+			if (s1.isEmpty()){
+				cout<<"Stack is empty"<<endl;
+			}
+			else{
+				cout<<"It is not empty"<<endl;
+			}
+			break;
+		case 4:
+			if (s1.isFull()){
+				cout<<"The stack is full"<<endl;
+			}
+			else{
+				cout<<"Stack is not full"<<endl;
+			}
+			break;
+		case 5:
+		    cout<<"peek element is"<<s1.peek()<<endl;
+		    break;
+		case 6:
+			cout<<"Total elements are"<<s1.count()<<endl;
+			break;
+		case 7:
+		    cout<<"Enter the position"<<endl;
+		    cin>>pos;
+			cout<<"Enter the element"<<endl;
+			cin>>val;
+			s1.change(pos,val);
+			break;	
+		case 8:
+			s1.display();
+			break;
+		case 9:
+		    system("cls"); 
+	}
+	 
+	}while(option!=0);
+			     
+			
+			
+			
+			
+	
+}
+
+
