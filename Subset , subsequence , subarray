@@ -1,0 +1,17 @@
+Let array be a[]={1,2,3,4,5,6}
+
+subarray can be
+
+{1, 2, 3}
+{2, 3, 4}
+etc.
+
+subsequence can be
+
+{1, 3}
+{1，4}
+etc.
+
+subset can be
+
+{1}
