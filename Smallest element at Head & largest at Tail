@@ -1,0 +1,127 @@
+
+#include <bits/stdc++.h> 
+using namespace std; 
+
+struct Node { 
+    int data; 
+    struct Node* next; 
+}; 
+  
+
+int largestElement(struct Node* head) 
+{ 
+   
+    int max = INT_MIN; 
+    while (head != NULL) { 
+        if (max < head->data) 
+            max = head->data; 
+        head = head->next; 
+    } 
+    return max; 
+} 
+  
+int smallestElement(struct Node* head) 
+{ 
+   
+    int min = INT_MAX; 
+ 
+    while (head != NULL) { 
+        if (min > head->data) 
+            min = head->data; 
+  
+        head = head->next; 
+    } 
+    return min; 
+} 
+
+struct Node * minAtHead(struct Node** head, int min){
+     struct Node* prev=(struct Node*)malloc(sizeof(struct Node)); 
+     struct Node* curr=(struct Node*)malloc(sizeof(struct Node)); 
+     prev=*head;
+     curr=*head;
+     while(curr->data!=min){
+         prev=curr;
+         curr=curr->next;
+     }
+     prev->next=curr->next;
+     curr->next=*head;
+     *head=curr;
+     
+     return *head;
+}
+
+
+
+// struct Node * maxAtTail(struct Node** head, int max){
+//      struct Node* prev1=(struct Node*)malloc(sizeof(struct Node)); 
+//      struct Node* curr1=(struct Node*)malloc(sizeof(struct Node));
+//      struct Node* traverse=(struct Node*)malloc(sizeof(struct Node));
+//      prev1=*head;
+//      curr1=*head;
+//      traverse=*head;
+//      while(curr1->data!=max){
+//          prev1=curr1;
+//          curr1=curr1->next;
+//      }
+//      prev1->next=curr1->next;
+     
+//      while(traverse->next!=NULL){
+//          traverse=traverse->next;
+//      }
+//      traverse->next=curr1;
+     
+   
+//      return *head;
+// }
+
+  
+  
+  
+void push(struct Node** head, int data) 
+{ 
+    struct Node* newNode =  
+         (struct Node*)malloc(sizeof(struct Node)); 
+    newNode->data = data; 
+    newNode->next = (*head); 
+    (*head) = newNode; 
+} 
+  
+void printList(struct Node* head) 
+{ 
+    while (head != NULL) { 
+        printf("%d -> ", head->data); 
+        head = head->next; 
+    } 
+    cout << "NULL" << endl; 
+} 
+  
+int main() 
+{ 
+    struct Node* head = NULL; 
+    push(&head, 15); 
+    push(&head, 14); 
+    push(&head, 13); 
+    push(&head, 22); 
+    push(&head, 17); 
+    cout << "Linked list is : " << endl; 
+    printList(head); 
+    cout << "Maximum element in linked list:"; 
+    int maximum=largestElement(head);
+    cout<<maximum;
+    cout<<endl;
+    
+    cout << "Minimum element in linked list:"; 
+    int minimum=smallestElement(head);
+    cout<<minimum;
+    cout<<endl;
+    
+    
+    struct Node* newNode =minAtHead(&head,minimum);
+    // struct Node* newN =maxAtTail(&newNode,maximum);
+    
+    printList(newNode);
+  
+    
+  
+    return 0; 
+} 
