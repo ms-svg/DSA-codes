@@ -1,0 +1,43 @@
+class Solution {
+public:
+
+    void dfs(int row, int col, int l, int k, vector<vector<char>>& grid, vector<vector<int>>& visited) {
+    visited[row][col] = 1;
+
+    vector<int> dirX = {0, 0, -1, 1}; 
+    vector<int> dirY = {-1, 1, 0, 0};
+
+    for (int i = 0; i < 4; i++) {
+        int newRow = row + dirX[i];
+        int newCol = col + dirY[i];
+        
+        if (newRow >= 0 && newRow < l && newCol >= 0 && newCol < k) {
+            if (visited[newRow][newCol] == 0 && grid[newRow][newCol] == '1') {
+                dfs(newRow, newCol, l, k, grid, visited);
+            }
+        }
+    }
+}
+
+    int numIslands(vector<vector<char>>& grid) {
+        int l = grid.size();
+        if (l == 0) return 0;
+        int k = grid[0].size();
+        
+        vector<vector<int>> visited(l, vector<int>(k, 0));
+
+        int islands = 0;
+        for(int i = 0; i < l; i++){
+            for(int j = 0; j < k; j++){
+                if(grid[i][j] == '1' && visited[i][j] == 0){
+                    islands++;
+                    dfs(i, j, l, k, grid, visited);
+                }
+            }
+        }
+
+        return islands;        
+    }
+
+    
+};
