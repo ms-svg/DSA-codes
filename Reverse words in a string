@@ -1,0 +1,49 @@
+//#include <boost/algorithm/string.hpp>
+class Solution {
+public:
+
+    inline void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }));
+}
+
+// trim from end (in place)
+inline void rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
+    
+    string reverseWords(string s) {
+        
+        string curr="";
+        vector<string> res; 
+        for(int i=s.length()-1;i>=0;i--){
+            if(s[i]==' '){
+                // Agar empty aagya to res - vector me daal dege.
+                if(curr!=""){
+                    // mtlb current string me kuj na kuj hai.
+                    reverse(curr.begin(), curr.end()); 
+                    res.push_back(curr);
+                    curr="";
+                }
+                
+            }
+            else{
+                curr+=s[i];
+            }
+        }
+        reverse(curr.begin(), curr.end()); 
+        res.push_back(curr);
+        string finals="";
+        for(int i=0;i<res.size()-1;i++){
+            finals+=res[i];
+            finals+=" ";   
+        }
+        finals+=res[res.size()-1];
+        ltrim(finals);
+        rtrim(finals);
+        return finals;
+    }
+};
