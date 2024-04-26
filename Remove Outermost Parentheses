@@ -1,0 +1,34 @@
+class Solution {
+public:
+    string removeOuterParentheses(string s) {
+        
+        stack<char> st;
+        string res="";
+        for(int i=0;i<s.length();i++){
+            
+            if(s[i]=='('){
+                if(st.empty()){
+                    // Stack empty hua 
+                    st.push(s[i]);
+                }
+                else{
+                 // Agar empty na hua
+                    res+=s[i];
+                    st.push(s[i]);
+                }
+            }
+            else{
+                
+                // Agar ')' ye aya
+                if(st.size()==1){
+                    st.pop();
+                }
+                else{
+                    st.pop();
+                    res+=s[i];
+                }
+            }
+        }
+        return res;
+    }
+};
