@@ -1,0 +1,39 @@
+class Solution {
+public:
+    vector<vector<int>> findWinners(vector<vector<int>>& matches) {
+        
+        vector<vector<int>> result;
+        map<int,int> mp;
+    
+        for(int i = 0;i<matches.size();i++){
+            int asp = matches[i][1];
+            mp[asp]++;
+            int astra = matches[i][0];
+            if(mp.find(astra)!=mp.end()){
+                
+            }
+            else{
+                mp.insert({astra,0});
+            }
+        }
+        
+        vector<int> res1;
+        for(auto it:mp){
+            if(it.second == 0){
+                res1.push_back(it.first);
+            }
+        }
+        
+        vector<int> res2;
+        for(auto it:mp){
+            if(it.second == 1){
+                res2.push_back(it.first);
+            }
+        }
+        
+        result.push_back(res1);
+        result.push_back(res2);
+        
+        return result;
+    }
+};
