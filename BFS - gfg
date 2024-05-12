@@ -1,0 +1,21 @@
+ // Function to return Breadth First Traversal of given graph.
+    vector<int> bfsOfGraph(int V, vector<int> adj[]) {
+        queue<int> qt;
+        vector<int> visited(V);
+        vector<int> result;
+        qt.push(0);
+        while(!qt.empty()){  
+            int pows = qt.front();
+            qt.pop();
+            visited[pows] = 1;
+            result.push_back(pows);
+            
+            for(int it: adj[pows]){
+                if(visited[it]!=1){
+                    visited[it] = 1;
+                    qt.push(it);
+                }
+            }
+        }
+        return result;
+    }
