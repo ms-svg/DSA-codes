@@ -1,0 +1,26 @@
+// DFS
+    void dfs(int s,vector<int> adj[], vector<int>& visited,vector<int>& result ){
+        visited[s]=1;
+       result.push_back(s);
+        for(int it:adj[s]){
+            if(visited[it]!=1){
+                visited[it]=1;
+                dfs(it,adj,visited,result);
+                
+            }
+        }
+    }
+    // Function to return a list containing the DFS traversal of the graph.
+    vector<int> dfsOfGraph(int V, vector<int> adj[]) {
+        
+        vector<int> visited(V);
+        vector<int> result;
+        int count=0;
+        for(int i=0;i<V;i++){
+            if(visited[i]!=1){
+                count++;
+                dfs(i,adj,visited,result);
+            }
+        }
+        return result;
+    }
