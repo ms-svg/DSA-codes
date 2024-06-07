@@ -1,0 +1,778 @@
+Prep :- 
+
+1. Breaking wall
+
+#include <bits/stdc++.h>
+using namespace std;
+char a[1001][1001];
+int n, m;
+int stars[1001][1001];
+pair<int, int> vis1[1001][1001];
+int vis[1001][1001];
+int star_cnt;
+int comp;
+
+bool check(int i, int j) {
+	if (i >= n || i < 0 || j >= m || j < 0)
+		return false;
+	if (a[i][j] == '#' || vis[i][j])
+		return false;
+	return true;
+}
+
+bool check1(int i, int j) {
+	if (i >= n || i < 0 || j >= m || j < 0)
+		return false;
+	if (a[i][j] == '#' || vis1[i][j].first)
+		return false;
+	return true;
+}
+
+void dfs(int i, int j) {
+	if (a[i][j] == '*')
+		star_cnt++;
+	if (check(i, j + 1)) {
+		vis[i][j + 1] = 1;
+		dfs(i, j + 1);
+	}
+	if (check(i, j - 1)) {
+		vis[i][j - 1] = 1;
+		dfs(i, j - 1);
+	}
+	if (check(i + 1, j)) {
+		vis[i + 1][j] = 1;
+		dfs(i + 1, j);
+	}
+	if (check(i - 1, j)) {
+		vis[i - 1][j] = 1;
+		dfs(i - 1, j);
+	}
+}
+void mask_str_cnt(int i, int j, int star_cnt) {
+	stars[i][j] = star_cnt;
+	if (check1(i, j + 1)) {
+		vis1[i][j + 1] = { 1, comp };
+		mask_str_cnt(i, j + 1, star_cnt);
+	}
+	if (check1(i, j - 1)) {
+		vis1[i][j - 1] = { 1, comp };
+		mask_str_cnt(i, j - 1, star_cnt);
+	}
+	if (check1(i + 1, j)) {
+		vis1[i + 1][j] = { 1, comp };
+		mask_str_cnt(i + 1, j, star_cnt);
+	}
+	if (check1(i - 1, j)) {
+		vis1[i - 1][j] = { 1, comp };
+		mask_str_cnt(i - 1, j, star_cnt);
+	}
+}
+
+bool exist(int i, int j) {
+	if (i >= n || i < 0 || j >= m || j < 0)
+		return false;
+	if (a[i][j] == '#')
+		return false;
+	return true;
+}
+
+int find_max_sum_wall(int i, int j) {
+	int star[] = { 0, 0, 0, 0 };
+	map<int, int> ma;
+	if (exist(i, j - 1)) {
+		if (!ma[vis1[i][j - 1].second]) {
+			ma[vis1[i][j - 1].second] = 1;
+			star[0] = stars[i][j - 1];
+		}
+
+	}
+
+	if (exist(i, j + 1)) {
+		if (!ma[vis1[i][j + 1].second]) {
+			ma[vis1[i][j + 1].second] = 1;
+			star[1] = stars[i][j + 1];
+		}
+	}
+
+	if (exist(i + 1, j)) {
+		if (!ma[vis1[i + 1][j].second]) {
+			ma[vis1[i + 1][j].second] = 1;
+			star[2] = stars[i + 1][j];
+		}
+	}
+
+	if (exist(i - 1, j)) {
+		if (!ma[vis1[i - 1][j].second]) {
+			ma[vis1[i - 1][j].second] = 1;
+			star[3] = stars[i - 1][j];
+		}
+	}
+
+	sort(star, star + 4);
+	return (star[3] + star[2]);
+}
+int main() {
+	cin >> n >> m;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			cin >> a[i][j];
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (a[i][j] != '#' && vis[i][j] == 0) {
+				vis[i][j] = 1;
+				star_cnt = 0;
+				dfs(i, j);
+				vis1[i][j] = { 1, comp };
+				mask_str_cnt(i, j, star_cnt);
+				comp++;
+			}
+		}
+	}
+
+	int ans = 0;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (a[i][j] == '#') {
+				int temp_ans = find_max_sum_wall(i, j);
+				ans = max(ans, temp_ans);
+			}
+		}
+	}
+	cout << ans << endl;
+	return 0;
+}
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+2. saving ms w
+
+
+#include <bits/stdc++.h>
+using namespace std;
+const long long N = 1e3 + 10;
+long long n, m, start, endd;
+
+long long a[N], b[N], W[N], t[N], c[N], dist[N][N];
+
+vector<pair<long long, long long > > v[N];
+vector<long long> can[N];
+
+void find_path(long long i) {
+	dist[i][i] = 0;
+	set<pair<long long, long long > > q;
+	q.insert( { 0, i });
+	while (q.size()) {
+		long long from = (*q.begin()).second, d = (*q.begin()).first;
+		q.erase(q.begin());
+		for (auto to : v[from]) {
+			long long dd = d + to.second;
+			if (dd < dist[i][to.first]) {
+				q.erase( { dist[i][to.first], to.first });
+				q.insert( { dd, to.first });
+				dist[i][to.first] = dd;
+			}
+		}
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	cout.tie(0);
+	cin >> n >> m >> start >> endd;
+
+	for (long long i = 0; i < m; i++) {
+		long long x, y, z;
+		cin >> x >> y >> z;
+		v[x].push_back( { y, z }), v[y].push_back( { x, z });
+	}
+
+	for (long long i = 1; i <= n; i++) {
+		for (long long j = 1; j <= n; j++) {
+			dist[i][j] = 1e15;
+		}
+	}
+
+	for (long long i = 1; i <= n; i++) {
+		cin >> t[i] >> c[i];
+		find_path(i);
+	}
+
+	long long ans[N];
+
+	for (long long i = 0; i <= n; i++) {
+		ans[i] = 1e15;
+	}
+
+	set<pair<long long, long long > > q;
+	ans[start] = 0;
+
+	q.insert( { 0, start });
+
+	while (!q.empty()) {
+		long long i = (*q.begin()).second, d = (*q.begin()).first;
+		q.erase(q.begin());
+		for (long long j = 1; j <= n; j++) {
+			if (dist[i][j] > t[i])
+				continue;
+			long long dd = c[i] + d;
+			if (dd < ans[j]) {
+				q.erase( { ans[j], j });
+				ans[j] = dd;
+				q.insert( { dd, j });
+			}
+		}
+	}
+
+	if (ans[endd] == 1e15) {
+		cout << -1;
+	} else {
+		cout << ans[endd];
+	}
+}
+
+
+
+-------------------------------------------------------------------------------------
+
+
+3. Rohit and his brother -> recursion done memoizatio no
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct MyHash {
+    std::size_t operator()(const std::tuple<int, int, int>& t) const {
+        return std::hash<int>{}(std::get<0>(t)) ^ std::hash<int>{}(std::get<1>(t)) ^ std::hash<int>{}(std::get<2>(t));
+    }
+};
+
+
+int recurse(vector<int>& a,vector<int>& b,int index,int sum,int maxi,unordered_map<std::tuple<int, int, int>, int,myHash>& mp){
+
+	if(index < 0){
+
+		if(maxi >= sum && sum > 0){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+	}
+
+	if(mp.find({index,sum,maxi})!=mp.end()){
+		return mp[{index,sum,maxi}];
+	}
+
+	// pick
+	int pick = recurse(a,b,index-1,sum + b[index] , max(maxi,a[index]),mp);
+	
+	int nonpick = recurse(a,b,index-1,sum,maxi,mp);
+
+	mp[{index,sum,maxi}] = pick + nonpick;
+
+	return mp[{index,sum,maxi}];
+
+}
+int main() {
+	
+
+	int q;
+	cin>>q;
+
+	while(q--){
+
+		int n;
+		cin>>n;
+		vector<int> a;
+		vector<int> b;
+
+		for(int i=0;i<n;i++){
+			int input;
+			cin>>input;
+			a.push_back(input);
+		}
+
+		for(int i=0;i<n;i++){
+			int input;
+			cin>>input;
+			b.push_back(input);
+		}
+
+//		unordered_map<pair<int,pair<int,int>>,int> mp;
+        unordered_map<tuple<int, int, int>, int,myHash> mp;
+		int answer = recurse(a,b,n-1,0,0,mp);
+
+		cout<<answer<<endl;
+	}
+}
+
+
+
+
+------------------------------------------------------------------------------------
+
+4. Water and the earth   ( Hackerearth )
+
+5.  Maximum Range (same)
+
+6. Two Robots (hackerrank)
+
+code :-
+
+int findMinDistance(int m, vector<vector<int>> &queries, int index, int r1, int r2, vector<vector<int>> &dp) {
+     if (index == queries.size()) {
+         return 0;
+     }
+     if (dp[r1+1][r2+1] != -1) return dp[r1+1][r2+1];
+     int dist1 = 0, dist2 = 0;
+     if (r1 == -1) {
+         // Robot hasn't started
+         dist1 = abs(queries[index][0]-queries[index][1])+ findMinDistance(m, queries, index+1, index, r2, dp);
+     }  else {
+         // Calculate distance taken to reach to the 1st Basket of Query
+         dist1 = abs(queries[index][0]-queries[r1][1])+abs(queries[index][0]-queries[index][1])+ findMinDistance(m, queries, index+1, index, r2, dp);
+     }
+     if (r2 == -1) {
+         // Robot hasn't started
+         dist2 = abs(queries[index][0]-queries[index][1])+ findMinDistance(m, queries, index+1, r1, index, dp);
+     }  else {
+         dist2 = abs(queries[index][0]-queries[r2][1])+abs(queries[index][0]-queries[index][1])+ findMinDistance(m, queries, index+1, r1, index, dp);
+     }
+     return dp[r1+1][r2+1] = min(dist1, dist2);
+}
+ 
+int twoRobots(int m, vector<vector<int>> queries) {
+    int size = queries.size();
+    vector<vector<int>> dp (size, vector<int>(size, -1));
+    return findMinDistance(m, queries, 0, -1, -1, dp);
+}
+
+
+----------------------------------------------------
+
+
+7. Transportation network
+
+#include <iostream>
+ 
+ 
+using namespace std;
+int main() {
+	
+ 
+	int n,q;
+	cin>>n>>q;
+	
+	bool visrail[n+1]={0};
+	bool visroad[n+1]={0};
+ 
+	for(int i=0;i<q;i++){
+ 
+		int type,u,v;
+		cin>>type>>u>>v;
+ 
+		if(type==1){
+			visrail[u]=1;
+			visrail[v]=1;
+		}
+		else
+		{
+			visroad[u]=1;
+			visroad[v]=1;
+		}
+ 
+		int flag = 0;
+		for(int i=1;i<=n;i++)
+		{
+			if(visroad[i] != visrail[i])
+			{
+				flag = 1;
+				cout<<"NO"<<endl;
+				break;
+			}
+		}
+ 
+		if(!flag) cout<<"YES"<<endl;
+		
+	}
+ 
+ 
+ 
+return 0;
+ 
+ 
+}
+
+---------------------------------------------------------------------------
+
+8. Benny & same magic.
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+ 
+int main() {
+    int n,m;
+    cin>>n>>m;
+ 
+    vector<pair<int,long long int>> adj[n+1];
+ 
+    for(int i=0;i<m;i++)
+    {
+        int s1,d1;
+        long long int w1;
+ 
+        cin>>s1>>d1>>w1;
+ 
+        adj[s1].push_back({d1,w1});
+    }
+ 
+    vector<bool> vis(n+1,0);
+    long long int abdif = -1;
+ 
+    for(int i=1;i<=n;i++)
+    {
+        if(vis[i]==0)
+        {
+            queue<int> qt;
+            qt.push(i);
+            vis[i]=1;
+            long long int maax = INT_MIN;
+            long long int miin = INT_MAX;
+            while(!qt.empty())
+            {
+                int temp = qt.front();
+                qt.pop();
+                for(int i=0;i<adj[temp].size();i++)
+                {
+                    if(vis[adj[temp][i].first]==0)
+                    {
+                        vis[adj[temp][i].first]=1;
+                        long long int weight = adj[temp][i].second;
+                        if(weight > maax) maax = weight;
+                        if(weight < miin) miin = weight;
+                        qt.push(adj[temp][i].first);
+                    }
+                    else
+                    {
+                        long long int weight = adj[temp][i].second;
+                        if(weight > maax) maax = weight;
+                        if(weight < miin) miin = weight;
+                    }
+                }
+            }
+            int diff = maax - miin;
+            abdif = max(abdif, static_cast<long long int>(diff)); 
+        }
+    }
+ 
+    if(abdif < 0){
+        abdif = 0;
+    }
+    cout<<abdif<<endl;
+    return 0;
+}
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+Permutation from codepro 
+
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <bits/stdc++.h>
+using namespace std;
+int main() {
+	int N;
+	cin >> N;
+	vector<vector<char>> color_mat(N,vector<char>(N,'0'));
+	unordered_map<char,vector<int>> color_boundaries;
+	for(int i=0;i<N;i++)
+	{
+		for(int j=0;j<N;j++)
+		{
+			cin >> color_mat[i][j];
+			if(color_mat[i][j] != '0')
+			{
+				if( color_boundaries.find(color_mat[i][j]) == color_boundaries.end() )
+				{
+					vector<int> boundaries = {i,i,j,j};
+					color_boundaries[color_mat[i][j]] = boundaries;
+				}
+				else
+				{
+					vector<int> boundaries = color_boundaries[color_mat[i][j]];
+					color_boundaries[color_mat[i][j]] ={min(i,boundaries[0]),max(i,boundaries[1]),min(j,boundaries[2]),max(j,boundaries[3])};
+				}
+			}
+		}
+	}
+	vector<char> allowed_colors;
+	for(auto each : color_boundaries)
+		allowed_colors.push_back(each.first);
+	sort(allowed_colors.begin(),allowed_colors.end());
+	do{
+		int ans = 0;
+		vector<vector<char>> color_mat_tmp(N,vector<char>(N,'0'));
+		for(auto each_color : allowed_colors)
+		{
+			int curr_ans = 0;
+			auto curr_color = color_boundaries[each_color];
+			for(int i=curr_color[0];i<=curr_color[1];i++)
+			{
+				for(int j=curr_color[2];j<=curr_color[3];j++)
+				{
+					if(color_mat_tmp[i][j] != '0')
+							curr_ans = 1;
+					color_mat_tmp[i][j] = each_color;
+				}
+			}
+			if(curr_ans == 0)
+				ans++;
+			if(color_mat == color_mat_tmp)
+			{
+				cout << ans;
+				return 0;
+			}
+		}
+	}while(next_permutation(allowed_colors.begin(),allowed_colors.end()));
+	return 0;
+}
+
+
+--------------------------------------------------------------------------------------------------
+Mushroom - codepro
+
+#include <iostream>
+using namespace std;
+ 
+int N;//Number of mushrooms
+int P[150000 + 10];//Mushroom value
+ 
+void InputData(){
+	cin >> N;
+	for (int i = 0; i < N; i++){
+		cin >> P[i];
+	}
+}
+ 
+int main(){
+	int ans = 0;
+ 
+	InputData();
+	int left = 0;
+	int right = 1;
+	while(right < N)
+	{
+		if(P[right] < P[right-1])
+		{
+			right++;
+		}
+		else
+		{
+			ans += P[left]-P[right-1];
+			left = right;
+			right++;
+		}
+	}
+	if(left <N)
+	ans+=P[left];
+	cout << ans << endl;	//	Output answer
+	return 0;
+}
+
+---------------------------------------------------------------------------------------
+
+
+
+Length of longest increasing subsequence 
+
+class Solution {
+public:
+    int result = 0;
+ 
+    int recurse(vector<int>& nums,int index,int lastEindex,vector<vector<int>>& dp)
+    {
+        if(index < 0)
+            return 0;
+        if(dp[index][lastEindex] != -1)
+            return dp[index][lastEindex];
+ 
+        int lastE;
+        if(lastEindex >= nums.size())
+            lastE  = INT_MAX;
+        else
+            lastE = nums[lastEindex];
+ 
+ 
+        int pick = 0;
+        if(nums[index] < lastE)
+        {
+            pick  = 1 + recurse(nums,index-1,index,dp);
+        }
+        dp[index][lastEindex] =  max(pick,recurse(nums,index-1,lastEindex,dp));
+        return dp[index][lastEindex];
+    }
+ 
+    int lengthOfLIS(vector<int>& nums) {
+        vector<vector<int>> dp(3000,vector<int>(3000,-1));
+        return  recurse(nums,nums.size()-1,nums.size(),dp);
+    }
+};
+
+
+-------------------------------------------------------------------------------------------------------
+
+
+breaking wall kartik
+
+
+#include <iostream>
+#include <vector>
+#include <climits>
+#include <queue>
+#include <set>
+#include <map>
+#include <unordered_map>
+#include <algorithm>
+using namespace std;
+ 
+int comp = 0;
+vector<pair<int,int>> dirs = {{-1,0},{0,1},{1,0},{0,-1}};
+vector<vector<char>> matrix(1001,vector<char>(1001));
+vector<vector<int>> visited(1001,vector<int>(1001,0));
+vector<vector<int>> stars(1001,vector<int>(1001,0));
+vector<vector<pair<int,int>>> visited_dup(1001,vector<pair<int,int>>(1001));
+ 
+long long dfs(int x,int y,int n,int m)
+{
+    if(x<0 || y<0 || x>=n || y>=m)
+        return 0;
+ 
+    if(visited[x][y] || matrix[x][y] == '#')
+        return 0;
+ 
+    visited[x][y] = 1;
+ 
+    int curr_count= 0;
+    if(matrix[x][y] == '*')curr_count++;
+ 
+    curr_count += dfs(x-1,y,n,m);
+    curr_count += dfs(x+1,y,n,m);
+    curr_count += dfs(x,y-1,n,m);
+    curr_count += dfs(x,y+1,n,m);
+ 
+    return curr_count;
+}
+ 
+void fill_star_count(int x,int y,int n,int m,long long sc)
+{
+    if(x<0 || y<0 || x>=n || y>=m)
+        return;
+ 
+    if(visited_dup[x][y].first !=0 || matrix[x][y] == '#')
+        return;
+ 
+    stars[x][y] = sc;
+    visited_dup[x][y] = {1,comp};
+    for(int i=0;i<4;i++)
+    {
+        int dx = x+dirs[i].first;
+        int dy = y+dirs[i].second;
+        fill_star_count(dx,dy,n,m,sc);
+    }
+}
+ 
+long long find_max_wall(int x,int y,int n,int m)
+{
+    vector<long long> star_curr = {0,0,0,0};
+    unordered_map<int,int> mp;
+ 
+    for(int i=0;i<4;i++)
+    {
+        int dx = x+ dirs[i].first;
+        int dy = y+ dirs[i].second;
+        if(dx < 0 || dy <0 || dx>=n || dy >=m)
+            continue;
+       
+        if(matrix[dx][dy] == '#')
+            continue;
+       
+        if(mp.find((visited_dup[dx][dy]).second) == mp.end())
+        {
+            mp[ (visited_dup[dx][dy]).second ] = 1;
+            star_curr[i] = stars[dx][dy];
+        }
+    }
+    sort(star_curr.begin(),star_curr.end());
+    return star_curr[2] + star_curr[3];
+ 
+}
+ 
+int main() {
+    int N,M;
+    cin >> N >> M;
+ 
+   
+    for(int i=0;i<N;i++)
+        for(int j=0;j<M;j++)
+            cin >> matrix[i][j];
+ 
+    for(int i=0;i<N;i++)
+    {
+        for(int j=0;j<M;j++)
+        {
+            if(matrix[i][j] != '#' && !visited[i][j])
+            {
+                long long star_count = dfs(i,j,N,M);
+                fill_star_count(i,j,N,M,star_count);
+                comp++;
+            }
+        }
+    }
+   
+    long long final_ans = LONG_MIN;
+    for(int i = 0;i<N;i++)
+    {
+        for(int j=0;j<M;j++)
+        {
+            if(matrix[i][j] == '#')
+            {
+                long long curr_max = find_max_wall(i,j,N,M);
+                if(final_ans < curr_max)
+                    final_ans = curr_max;
+            }
+        }
+    }
+    cout << final_ans;
+    return 0;
+}
+
+
+How to make graph
+
+How to calculate factors of N :-
+
+
+
+codejam & codepro lg.
+
+
+
+codepro questions :-
+
+
+
+
+
+
+
+
+
