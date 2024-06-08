@@ -1,0 +1,43 @@
+CODEPRO : 1
+
+#include <iostream>
+using namespace std;
+
+int N;//Number of sponsored goods
+int D[100000 + 10];//Preference
+int sol = -30001;//Maximum preference of the first method
+
+void InputData(){
+	cin >> N;
+	for(int i=0;i<N;i++){
+		cin >> D[i];
+	}
+}
+
+void Solve()
+{
+	int i, sum = 0;
+	for (i = 0; i < N - 2; i++) {
+		sum = D[i] + D[i + 1] + D[i + 2];
+		if (sum > sol) sol = sum;
+	}
+	
+		int maxSum = 0;
+	sol = -30001;
+	for(int i = 0;i<N;i++){
+		if(maxSum < 0){
+			maxSum = 0;
+		}
+		maxSum += D[i];
+		
+		sol = max(sol,maxSum);
+	}
+}
+
+
+int main(){
+	InputData();//Input function
+	Solve();
+	cout << sol << endl;//Output
+	return 0;
+}
