@@ -1,0 +1,107 @@
+Code pro : 2
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int N; // Number of executable code data
+int M; // Number of virus data
+int A[20000 + 10]; // Executable code data
+int B[10 + 10]; // Virus data
+
+int sol; // Correct answer
+
+void InputData(void)
+{
+    int i;
+
+    cin >> N >> M;
+
+    for (i = 0; i < N; i++) {
+        cin >> A[i];
+    }
+
+    for (i = 0; i < M; i++) {
+        cin >> B[i];
+    }
+}
+
+void OutputData(void)
+{
+    cout << sol;
+}
+
+int MSFind(int start, vector<int>& org)
+{
+    vector<int> dup;
+    for (int i = 0; i < M; i++) {
+        dup.push_back(A[start+i]); 
+    }
+    
+    sort(dup.begin(),dup.end());
+	
+	  vector<int> diff;
+	
+	for(int i = 0;i<dup.size();i++){
+		diff.push_back(dup[i] - org[i]);
+	}
+	int astra = diff[0];
+	if(astra == 0){
+		return 0;
+	}
+	for(int i = 0;i<diff.size();i++){
+		if(diff[i] != astra){
+			return 0;
+		}
+	}
+    return 1;
+}
+
+int Find(int start, map<int,int>& smp)
+{
+    int i;
+    map<int,int> mp=smp;
+    for (i = 0; i < M; i++) {
+        if(mp.find(A[start+i])==mp.end() || mp[A[start+i]] == 0){
+            return 0;
+        }
+        else{
+            mp[A[start+i]]--;
+        }
+    }
+    return 1;
+}
+
+void Solve(void)
+{
+    int i;
+    map<int,int> mp;
+    
+    vector<int> org;
+    for(int i = 0;i < M;i++){
+        mp[B[i]]++;
+        org.push_back(B[i]);
+    }
+    
+    sort(org.begin(),org.end());
+    
+    for (i = 0; i <= N - M; i++) {
+        sol += Find(i,mp);
+    }
+    
+    for (i = 0; i <= N - M; i++) {
+        sol += MSFind(i,org);
+    }
+}
+
+int main(void)
+{
+    InputData(); // Input
+
+    Solve(); // Problem solving
+
+    OutputData(); // Output
+
+    return 0;
+}
