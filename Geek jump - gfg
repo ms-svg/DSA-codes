@@ -1,0 +1,25 @@
+// Recursion
+
+int diffFrog(vector<int>& height,int n, int start){
+      
+      if(start == n-1){
+          return 0;
+      }
+      
+      int jumpOfOne = abs(height[start] - height[start+1]) + diffFrog(height,n,start+1);
+      int jumpTwo = INT_MAX;
+      if(start + 2 < n){
+          jumpTwo = abs(height[start] - height[start+2]) + diffFrog(height,n,start+2);
+      }
+      
+      return min(jumpOfOne,jumpTwo);
+  }
+    int minimumEnergy(vector<int>& height, int n) {
+        
+        return diffFrog(height,n,0);
+    }
+
+
+------------------------------------------------------------------------------------------------
+
+
