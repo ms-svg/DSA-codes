@@ -1,0 +1,30 @@
+class Solution {
+public:
+    
+    vector<int> ans;
+    void recurse(int index,vector<int> nums,vector<int>& result,int prev){
+        if(index >= nums.size()){   
+            if(ans.size() > result.size()){
+                result = ans;
+                return;
+            }
+            return;
+        }
+        // picking case
+        if(prev == -1 || nums[index] % ans.back() == 0 ){   
+            ans.push_back(nums[index]);
+            recurse(index+1,nums,result,ans.back());
+            ans.pop_back();
+        }
+        // not picking case;
+        recurse(index + 1, nums, result,prev);
+    }
+    
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        vector<int> result;
+       
+        recurse(0,nums,result,-1);
+        return result;
+    }
+};
