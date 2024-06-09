@@ -1,0 +1,63 @@
+CODEPRO :
+
+#include <bits/stdc++.h>
+using namespace std;
+int main() {
+	int N;
+	cin>>N;
+	
+	vector<vector<char>> color_mat(N,vector<char>(N,'0'));
+	
+	unordered_map<char,vector<int>> color_boundaries;
+	
+	for(int i = 0;i<N;i++){
+		for(int j = 0;j<N;j++){
+			cin>>color_mat[i][j];
+			if(color_mat[i][j]!='0'){
+				if(color_boundaries.find(color_mat[i][j])==color_boundaries.end()){
+					vector<int> boundaries = {i,i,j,j};
+					color_boundaries[color_mat[i][j]] = boundaries;
+				}
+				else{
+					vector<int> boundaries = color_boundaries[color_mat[i][j]];
+					color_boundaries[color_mat[i][j]] = {min(i,boundaries[0]),max(i,boundaries[1]),min(j,boundaries[2]),max(j,boundaries[3])};
+				}
+			}
+		}
+	}
+	
+	vector<char> allowed_colors;
+	
+	for(auto each:color_boundaries){
+		allowed_colors.push_back(each.first);
+	}
+	sort(allowed_colors.begin(),allowed_colors.end());
+	
+	
+	do{
+		int ans = 0;
+		vector<vector<char>> colors_mat_tmp(N,vector<char>(N,'0'));
+		for(auto each_color : allowed_colors){
+			int curr_ans = 0;
+			auto curr_color = color_boundaries[each_color];
+			
+			for(int i = curr_color[0];i<=curr_color[1];i++){
+				for(int j = curr_color[2];j<=curr_color[3];j++){
+					if(colors_mat_tmp[i][j]!='0'){
+						curr_ans = 1;
+					}
+					colors_mat_tmp[i][j]=each_color;
+				}
+			}
+			if(curr_ans == 0){
+				ans++;
+			}
+			if(color_mat==colors_mat_tmp){
+				cout<<ans;
+				return 0;
+			}
+		}
+	}
+	while(next_permutation(allowed_colors.begin(),allowed_colors.end()));
+	return 0;
+}
