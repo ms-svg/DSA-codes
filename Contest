@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+ using namespace std;
+ 
+ const long long INF = numeric_limits<long long>::max();
+ 
+ long long calculateTravelTime(const vector<int>& cityPerm, const vector<int>& transPerm, const vector<vector<vector<int>>>& D) {
+     int N = cityPerm.size();
+     long long totalTime = 0;
+     for (int i = 0; i < N; ++i) {
+         int from = cityPerm[i];
+         int to = cityPerm[(i + 1) % N];
+         int trans = transPerm[i];
+         if (D[trans][from][to] == 0) {
+             return INF; 
+         }
+         totalTime += D[trans][from][to];
+     }
+     return totalTime;
+ }
+ void solveTestCase() {
+     int N;
+     cin >> N;
+     vector<vector<vector<int>>> D(N, vector<vector<int>>(N, vector<int>(N)));
+     for (int k = 0; k < N; ++k) {
+         for (int i = 0; i < N; ++i) {
+             for (int j = 0; j < N; ++j) {
+                 cin >> D[k][i][j];
+             }
+         }
+     }
+     vector<int> cities(N);
+     iota(cities.begin(), cities.end(), 0);
+     vector<int> transMethods(N);
+     iota(transMethods.begin(), transMethods.end(), 0);
+     long long minTime = INF;
+     long long maxTime = -INF;
+     bool validTourFound = false;
+     do {
+         do {
+             long long currentTime = calculateTravelTime(cities, transMethods, D);
+             if (currentTime != INF) {
+                 validTourFound = true;
+                 minTime = min(minTime, currentTime);
+                 maxTime = max(maxTime, currentTime);
+             }
+         } while (next_permutation(transMethods.begin(), transMethods.end()));
+     } while (next_permutation(cities.begin(), cities.end()));
+ 
+     if (validTourFound) {
+         cout << minTime << " " << maxTime << endl;
+     } else {
+         cout << "0 0" << endl;
+     }
+ }
+ int main() {
+     int T;
+     cin >> T;
+     while (T--) {
+         solveTestCase();
+     }
+     return 0;
+ }
