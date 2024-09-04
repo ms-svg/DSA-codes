@@ -1,0 +1,85 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+using namespace std;
+
+bool bfs(int node, vector<vector<int>>& graph, vector<int>& color, vector<int>& group_size) {
+    queue<int> q;
+    q.push(node);
+    color[node] = 0;  // Start coloring this component with color 0
+    group_size[0] = 1;  // One node in color 0 group
+    group_size[1] = 0;  // Zero nodes in color 1 group
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+
+        for (int v : graph[u]) {
+            if (color[v] == -1) {  // If not yet colored
+                color[v] = 1 - color[u];  // Color it with opposite color
+                group_size[color[v]]++;
+                q.push(v);
+            } else if (color[v] == color[u]) {
+                // If adjacent node has the same color, then it's not bipartite
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int solve(int N, int M, vector<pair<int, int>>& enemy) {
+    vector<vector<int>> graph(N);
+
+    // Build the graph
+    for (auto& e : enemy) {
+        int u = e.first;
+        int v = e.second;
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+
+    vector<int> color(N, -1);  // To track the color of each node
+    int total_size = 0;
+    int group_sizes[2] = {0, 0};
+
+    // Process all components of the graph
+    for (int student = 0; student < N; ++student) {
+        if (color[student] == -1) {
+            vector<int> group_size(2, 0);
+            if (!bfs(student, graph, color, group_size)) {
+                // If the graph is not bipartite, return 0
+                return 0;
+            }
+            group_sizes[0] += group_size[0];
+            group_sizes[1] += group_size[1];
+            total_size += group_size[0] + group_size[1];
+        }
+    }
+
+    // We want to return the maximum value of S
+    return min(group_sizes[0], group_sizes[1]);
+}
+
+int main() {
+    int N = 8;
+    int M = 9;
+    vector<pair<int, int>> enemy = {
+        {0, 1},
+        {0, 2},
+        {1, 2},
+        {3, 4},
+        {3, 5},
+        {4, 5},
+        {0, 3},
+        {1, 4},
+        {2, 5}
+    };
+
+    // Adjust for 0-based indexing if needed by subtracting 1 from all inputs (already handled in input)
+    int result = solve(N, M, enemy);
+    cout << "Maximum possible value of S is: " << result << endl;
+
+    return 0;
+}
