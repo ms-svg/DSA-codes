@@ -1,0 +1,48 @@
+from collections import defaultdict
+
+def solve(N, M, enemy):
+    # Create an adjacency list to represent the graph
+    graph = defaultdict(list)
+
+    # Build the graph
+    for u, v in enemy:
+        graph[u].append(v)
+        graph[v].append(u)
+
+    # Initialize two sets to represent the two groups
+    group1 = set()
+    group2 = set()
+
+    # Function to perform a depth-first search to divide the students into groups
+    def dfs(node, group):
+        if node in group:
+            return True
+
+        for neighbor in graph[node]:
+            if neighbor in group:
+                return False
+            if not dfs(neighbor, group):
+                return False
+
+        group.add(node)
+        return True
+
+    # Try to divide the students into two groups
+    for student in range(1, N+1):
+        if student not in group1 and student not in group2:
+            if not dfs(student, group1):
+                dfs(student, group2)
+
+    # Calculate the maximum size of the groups
+    max_group_size = max(len(group1), len(group2))
+    return max_group_size
+
+# Input reading and function call
+if __name__ == "__main__":
+    N = int(input())
+    M = int(input())
+    enemy = []
+    for _ in range(M):
+        u, v = map(int, input().split())
+        enemy.append((u, v))
+    print(solve(N, M, enemy))
