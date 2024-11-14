@@ -1,0 +1,78 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int S, E1, E2;
+int ans1, ans2;
+int number1;
+void InputData()
+{
+	cin >> S >> E1 >> E2;
+}
+
+
+
+int countFactors(int x) {
+    int i = 1;
+	  int count = 0;
+    while(i*i <= x) {
+        if(x % i == 0) {
+            count++;
+            if(x/i != i) {
+                count++;
+            }
+        }
+        i++;
+    }
+    return count;
+}
+
+int bfs(int start, int end) {
+    queue<pair<pair<int, int>,int>> q; 
+    unordered_set<int> visited; 
+    int dest_p = number1;
+    q.push({{start, 0},number1});
+    visited.insert(start);
+
+    while (!q.empty()) {
+        auto [current, jumps] = q.front().first;
+			int pritam = q.front().second;
+        q.pop();
+        if (current == end) {
+            return jumps;
+        }
+        string currentStr = to_string(current);
+        for (size_t i = 0; i < currentStr.size(); i++) {
+            char originalDigit = currentStr[i];
+            for (char digit = '0'; digit <= '9'; digit++) {
+                if (digit == originalDigit) continue; 
+                currentStr[i] = digit; 
+                int nextPlanet = stoi(currentStr);
+				
+                if (nextPlanet >= 1000 && nextPlanet < 10000 && visited.find(nextPlanet) == visited.end()) {
+                    int count_local = countFactors(nextPlanet);
+                    if ((count_local == pritam) || (abs(pritam - count_local) == 1)) {
+                        visited.insert(nextPlanet);
+                        q.push({{nextPlanet, jumps + 1},count_local});
+                    }
+                }
+            }
+            currentStr[i] = originalDigit; 
+        }
+    }
+    return -1; 
+}
+
+
+int main(){
+	InputData();
+
+	number1 = countFactors(S);
+	int number2 = countFactors(E1);
+	int number3 = countFactors(E2);
+	
+//	cout << " answer " << number1 << " " << number2 <<  "  " << number3<<endl;
+	cout << bfs(S,E1) << endl;
+	cout << bfs(S,E2) << endl;
+	
+	return 0;
+}
