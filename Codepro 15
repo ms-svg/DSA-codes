@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+ 
+using namespace std;
+ 
+#define MAXN 200000
+int N, M;
+int ID[MAXN + 10];
+int finalAnswer = 0;
+ 
+void InputData() {
+    cin >> N >> M;
+    for (int i = 0; i < N; i++) {
+        cin >> ID[i];
+    }
+}
+ 
+void presolve() {
+    int size = N;
+ 
+    int* maxElementPtr = std::max_element(ID, ID + size);
+    int maximumValue = *maxElementPtr;
+ 
+    vector<int> dp(maximumValue + 2, 0); 
+ 
+    for (int i = 0; i < M; i++) {
+        int number = ID[i];
+        if (number < dp.size()) {
+            dp[number]++;
+            if (number + 1 < dp.size()) dp[number + 1]++;
+            if (number - 1 >= 0) dp[number - 1]++;
+        }
+    }
+ 
+    finalAnswer = *max_element(dp.begin(), dp.end());
+ 
+    for (int end = M; end < N; end++) {
+        int numberAdded = ID[end];
+        if (numberAdded < dp.size()) {
+            dp[numberAdded]++;
+            if (numberAdded + 1 < dp.size()) dp[numberAdded + 1]++;
+            if (numberAdded - 1 >= 0) dp[numberAdded - 1]++;
+        }
+        int numberRemoved = ID[end - M];
+        if (numberRemoved < dp.size()) {
+            dp[numberRemoved]--;
+            if (numberRemoved + 1 < dp.size()) dp[numberRemoved + 1]--;
+            if (numberRemoved - 1 >= 0) dp[numberRemoved - 1]--;
+        }
+        finalAnswer = max(finalAnswer, *max_element(dp.begin(), dp.end()));
+    }
+ 
+    cout << finalAnswer << "\n"; 
+}
+ 
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+ 
+    InputData(); 
+    presolve(); 
+ 
+    return 0;
+}
