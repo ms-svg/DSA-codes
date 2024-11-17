@@ -1,0 +1,62 @@
+8/11 Test cases 
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int N; // 이물질의 개수
+int K; // 장비 최대 사용가능 횟수
+int X[50000]; // 이물질의 위치
+
+void InputData() {
+	cin >> N >> K;
+	for (int i = 0; i < N; i++) {
+		cin >> X[i];
+	}
+}
+
+
+bool isPossible(long long mid){
+	long long range = 2*mid;
+	int c = 0;
+	long long currentMaximum = 0;
+	for(int i = 0 ; i < N;i++){
+		if(X[i] > currentMaximum){
+			currentMaximum = X[i] + range;
+			c++;
+		}
+	}
+	return c <= K;
+}
+
+int solve(long long low,long long high){
+	int ans = -1;
+	while(low < high){
+		long long mid = (low + high)/2;
+		if(isPossible(mid)){
+		//	cout<<" possible with this "<<mid<<endl;
+			ans = mid;
+			high = mid-1;
+		}
+		else{
+			low = mid + 1;
+		}
+	}
+	return ans;
+}
+int main() {
+	int ans = -1;
+	InputData(); // 입력 받는 부분
+
+	// 여기서부터 작성
+	//cout << ans << endl;// 출력하는 부분
+	
+	sort(X,X+N);
+	
+	long long low = 0;
+	long long  high = X[N-1];
+	
+	cout << solve(low,high);
+	return 0;
+}
+
+
