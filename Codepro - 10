@@ -1,0 +1,35 @@
+int Solve(void) {
+	int count = 0;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (a[i][j] != X1) continue;
+			for (int k = 0; k < 8; k++) {
+				int ni = i + di[k];
+				int nj = j + dj[k];
+				if (ni < 0 || ni >= N) continue;
+				if (nj < 0 || nj >= N) continue;
+				if (a[ni][nj] != X2) continue;
+				
+				if(a[ni][nj] == X2){
+					int fr = ni + di[k];
+					int fc = nj + dj[k];	
+					if(fr < 0 || fr >= N) continue;
+					if(fc < 0 || fc >= N) continue;
+					if(a[fr][fc] != X3) continue;
+					count++;
+				}
+				
+				else if(a[ni][nj] == X3){
+					int fr = ni + di[k];
+					int fc = nj + dj[k];	
+					if(fr < 0 || fr >= N) continue;
+					if(fc < 0 || fc >= N) continue;
+					if(a[fr][fc] != X2) continue;
+					count++;
+				}
+			
+			}
+		}
+	}
+	return count;
+}
