@@ -1,114 +1,47 @@
-from collections import defaultdict
-
-def solve(N, M, enemy):
-    # Create an adjacency list to represent the graph
-    graph = defaultdict(list)
-    for u, v in enemy:
-        graph[u].append(v)
-        graph[v].append(u)
-
-    # Initialize two sets to represent the two groups
-    group1 = set()
-    group2 = set()
-
-    # Function to perform a depth-first search to divide the students into groups
-    def dfs(node, group):
-        if node in group:
-            return True
-        for neighbor in graph[node]:
-            if neighbor in group:
-                return False
-        group.add(node)
-        for neighbor in graph[node]:
-            if not dfs(neighbor, group):
-                return False
-        return True
-
-    # Try to divide the students into two groups
-    for student in range(1, N + 1):
-        if student not in group1 and student not in group2:
-            if not dfs(student, group1):
-                dfs(student, group2)
-
-    # Calculate the maximum size of the groups
-    max_group_size = max(len(group1), len(group2))
-
-    return max_group_size
-
-# Input reading and function call
-if __name__ == "__main__":
-    N = int(input())
-    M = int(input())
-    enemy = []
-    for _ in range(M):
-        u, v = map(int, input().split())
-        enemy.append((u, v))
-
-    result = solve(N, M, enemy)
-    print(result)
-
-FROM ubuntu:jammy
+#!/bin/bash
  
-LABEL version="1.0" \
-      maintainer="sohwanpark <sohwan.park@lge.com>" \
-      description="This image is used to run gst-validation for Gstreamer"
+set -x
+set -e
  
-# Set default user and group IDs
-ENV U_ID=1000 \
-    G_ID=1000 \
-    DOCKER_USER=si-mediaserver15
-# please update si-mediaserver15 with username like whoami
-# Set environment variables
-ENV WORK_DIR=/home/si-mediaserver15 \
-    DEBIAN_FRONTEND=noninteractive \
-    LANG=en_US.UTF-8 \
-    LC_ALL=en_US.UTF-8 \
-    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/usr/local/lib \
-    LD_RUN_PATH=$LD_RUN_PATH:/usr/lib:/usr/local/lib
+DOCKER_USER=$1
+ 
+# Install tools building gst-build and libraries for gstreamer plugins
+apt-get update -y
+ 
+# Remove old version libraries
+apt-get remove -y gstreamer1.0
+apt-get autoremove -y
+ 
+apt-get update -y
+apt-get upgrade -y
+ 
+ACCEPT_EULA=Y apt-get install -y vim bison g++ git build-essential python3 python3-distutils libpython2-dbg libpython2-dev libpython3-dev libpython3-dbg net-tools language-pack-ko python3-pip wget unzip pkg-config gtk-doc-tools libsoup2.4-dev vpx-tools libvorbis-dev libvpx-dev libtheora-dev libopus-dev libde265-dev libx265-dev gnutls-bin ubuntu-restricted-extras libva-dev ffmpeg libavfilter-dev libcgroup-dev libx264-dev libopencore-amrnb-dev libmpeg2-4-dev liborc-0.4-dev libvpx-dev libmpg123-dev libraw1394-dev libflac-dev libcurl4-gnutls-dev libopencore-amrwb-dev libpulse-dev libgstrtspserver-1.0-dev libjpeg-dev mjpegtools libmp3lame-dev gobject-introspection libgirepository1.0-dev libdirectfb-dev libgles2 libpulse-dev valgrind libjson-c-dev flex bison libssl-dev libcrypto++-dev libgtk-3-dev cmake libjson-glib-dev libasound2-dev libxv-dev libgmp3-dev libass-dev libdv4-dev libdvdnav-dev libdvdread-dev libkate-dev libnice-dev librsvg2-dev librtmp-dev libshout-idjc-dev libsrtp2-dev libunwind-dev libvisual-0.4-dev nettle-dev libopenjp2-7-dev libsbc-dev libsoundtouch-dev libspandsp-dev libspeexdsp-dev libass-dev libtag1-dev libvo-aacenc-dev libwavpack-dev libwavpack-dev libwebrtc-audio-processing-dev libzbar-dev libcdparanoia-dev libvorbisidec-dev qtbase5-dev python3-gi xvfb mesa-utils ssh-askpass ccache gperf intltool nasm xutils-dev distcc googletest git-lfs x11-utils tig curl indent libgupnp-1.2-dev libgupnp-av-1.0-dev libpciaccess-dev libgraphene-1.0-dev libx11-xcb-dev
  
  
-# Configure locale settings
-#RUN echo "LC_ALL=ko_KR.UTF-8" >> /etc/environment && \
-#    echo "LANG=ko_KR.UTF-8" >> /etc/environment
+# Install meson and ninja build system
+pip3 install meson==1.6.1
+wget https://github.com/ninja-build/ninja/releases/download/v1.9.0/ninja-linux.zip
+unzip ninja-linux.zip
+cp ninja /usr/bin
  
-RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment && \
-    echo "LANG=en_US.UTF-8" >> /etc/environment
  
-# Update apt and install required packages
-RUN apt-get update && \
-    apt-get install -y sudo ca-certificates && \
-    groupadd -g $G_ID $DOCKER_USER && \
-    useradd -u $U_ID -g $G_ID -s /bin/bash -d /home/$DOCKER_USER -m $DOCKER_USER && \
-    echo "$DOCKER_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# Install python-pip
+curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py
+python3 get-pip.py
  
-# Set up the user environment
-RUN echo ". /etc/profile" >> /home/$DOCKER_USER/.bashrc && \
-    echo ". ~/.bashrc" >> /home/$DOCKER_USER/.bash_profile && \
-    chown $DOCKER_USER:$DOCKER_USER /home/$DOCKER_USER/.bashrc /home/$DOCKER_USER/.bash_profile && \
-    chmod +x /home/$DOCKER_USER/.bash_profile
+# SET language
+#locale-gen ko_KR.UTF-8
+locale-gen en_US.UTF-8
+update-locale LANG=en_US.UTF-8 LC_MESSAGES=POSIX
+#update-locale LANG=ko_KR.UTF-8 LC_MESSAGES=POSIX
  
-# Copy the install script into the container
-COPY install-gst-dev.sh /tmp/install-gst-dev.sh
+echo "if [ -f ~/temp/init.sh ]; then sudo ~/temp/init.sh "$DOCKER_USER"; else echo 'No init.sh file.'; fi" >> /home/$DOCKER_USER/.bashrc
+echo "export USE_DECPROXY=1" >> /home/$DOCKER_USER/.bashrc
+echo "export USE_PLAYBIN3=1" >> /home/$DOCKER_USER/.bashrc
+echo "export GIT_SSL_NO_VERIFY=1" >> /home/$DOCKER_USER/.bashrc
+echo "export GIT_LFS_SKIP_SMUDGE=1" >> /home/$DOCKER_USER/.bashrc
+echo "export GST_DLNA_CONFIG=/home/"$DOCKER_USER"/temp/lg_dlna.conf" >> /home/$DOCKER_USER/.bashrc
+echo "export XDG_RUNTIME_DIR=/home/"$DOCKER_USER"/XDG" >> /home/$DOCKER_USER/.bashrc
  
-# Ensure the script has execute permissions and run it
-RUN chmod +x /tmp/install-gst-dev.sh && \
-    ls -l /tmp/install-gst-dev.sh && \
-    /tmp/install-gst-dev.sh $DOCKER_USER && \
-    rm -f /tmp/install-gst-dev.sh
- 
-# Clean up apt lists
-RUN rm -rf /var/lib/apt/lists/* /tmp/*
- 
-# Set the working directory for future commands
-WORKDIR $WORK_DIR
- 
-# Expose necessary ports
-EXPOSE 80
-EXPOSE 8000
-EXPOSE 8080
-EXPOSE 8090
-EXPOSE 22
-
-
-
-
+set +e
+set +x
