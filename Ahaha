@@ -46,3 +46,69 @@ if __name__ == "__main__":
 
     result = solve(N, M, enemy)
     print(result)
+
+FROM ubuntu:jammy
+ 
+LABEL version="1.0" \
+      maintainer="sohwanpark <sohwan.park@lge.com>" \
+      description="This image is used to run gst-validation for Gstreamer"
+ 
+# Set default user and group IDs
+ENV U_ID=1000 \
+    G_ID=1000 \
+    DOCKER_USER=si-mediaserver15
+# please update si-mediaserver15 with username like whoami
+# Set environment variables
+ENV WORK_DIR=/home/si-mediaserver15 \
+    DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/usr/local/lib \
+    LD_RUN_PATH=$LD_RUN_PATH:/usr/lib:/usr/local/lib
+ 
+ 
+# Configure locale settings
+#RUN echo "LC_ALL=ko_KR.UTF-8" >> /etc/environment && \
+#    echo "LANG=ko_KR.UTF-8" >> /etc/environment
+ 
+RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment && \
+    echo "LANG=en_US.UTF-8" >> /etc/environment
+ 
+# Update apt and install required packages
+RUN apt-get update && \
+    apt-get install -y sudo ca-certificates && \
+    groupadd -g $G_ID $DOCKER_USER && \
+    useradd -u $U_ID -g $G_ID -s /bin/bash -d /home/$DOCKER_USER -m $DOCKER_USER && \
+    echo "$DOCKER_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+ 
+# Set up the user environment
+RUN echo ". /etc/profile" >> /home/$DOCKER_USER/.bashrc && \
+    echo ". ~/.bashrc" >> /home/$DOCKER_USER/.bash_profile && \
+    chown $DOCKER_USER:$DOCKER_USER /home/$DOCKER_USER/.bashrc /home/$DOCKER_USER/.bash_profile && \
+    chmod +x /home/$DOCKER_USER/.bash_profile
+ 
+# Copy the install script into the container
+COPY install-gst-dev.sh /tmp/install-gst-dev.sh
+ 
+# Ensure the script has execute permissions and run it
+RUN chmod +x /tmp/install-gst-dev.sh && \
+    ls -l /tmp/install-gst-dev.sh && \
+    /tmp/install-gst-dev.sh $DOCKER_USER && \
+    rm -f /tmp/install-gst-dev.sh
+ 
+# Clean up apt lists
+RUN rm -rf /var/lib/apt/lists/* /tmp/*
+ 
+# Set the working directory for future commands
+WORKDIR $WORK_DIR
+ 
+# Expose necessary ports
+EXPOSE 80
+EXPOSE 8000
+EXPOSE 8080
+EXPOSE 8090
+EXPOSE 22
+
+
+
+
