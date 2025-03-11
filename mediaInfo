@@ -1,0 +1,66 @@
+General
+Unique ID                                : 227139094454722554675177470374170518809 (0xAAE165FA9A256A12856582189782E519)
+Complete name                            : /home/si-mediaserver15/Videos/a.mkv
+Format                                   : Matroska
+Format version                           : Version 4
+File size                                : 71.5 MiB
+Duration                                 : 1 min 0 s
+Overall bit rate                         : 9 995 kb/s
+Encoded date                             : UTC 2017-03-09 05:48:42
+Writing application                      : mkvmerge v9.9.0 ('Pick Up') 64bit
+Writing library                          : libebml v1.3.4 + libmatroska v1.4.5 / ShanaEncoder
+
+Video
+ID                                       : 1
+Format                                   : HEVC
+Format/Info                              : High Efficiency Video Coding
+Format profile                           : Main@L4@Main
+Codec ID                                 : V_MPEGH/ISO/HEVC
+Duration                                 : 1 min 0 s
+Bit rate                                 : 9 800 kb/s
+Width                                    : 1 920 pixels
+Height                                   : 1 080 pixels
+Display aspect ratio                     : 16:9
+Frame rate mode                          : Constant
+Frame rate                               : 30.000 FPS
+Color space                              : YUV
+Chroma subsampling                       : 4:2:0
+Bit depth                                : 8 bits
+Bits/(Pixel*Frame)                       : 0.158
+Stream size                              : 70.1 MiB (98%)
+Writing library                          : x265 1.2+496-091a63164c41:[Windows][GCC 4.7.1][32 bit]
+Encoding settings                        : wpp / ctu=64 / tu-intra-depth=1 / tu-inter-depth=1 / me=1 / subme=2 / merange=57 / no-rect / no-amp / max-merge=2 / no-early-skip / no-fast-cbf / rdpenalty=0 / no-tskip / no-tskip-fast / strong-intra-smoothing / no-lossless / no-cu-lossless / no-constrained-intra / open-gop / interlace=0 / keyint=30 / min-keyint=3 / scenecut=40 / rc-lookahead=20 / bframes=4 / bframe-bias=0 / b-adapt=2 / ref=3 / weightp / no-weightb / aq-mode=2 / aq-strength=1.00 / cbqpoffs=0 / crqpoffs=0 / rd=3 / signhide / lft / sao / sao-lcu-bounds=0 / sao-lcu-opt=1 / b-pyramid / cutree / rc=crf / crf=10.0 / qcomp=0.60 / qpmin=0 / qpmax=51 / qpstep=4 / ipratio=1.40 / pbratio=1.30
+Default                                  : Yes
+Forced                                   : No
+
+Audio
+ID                                       : 2
+Format                                   : AC-3
+Format/Info                              : Audio Coding 3
+Commercial name                          : Dolby Digital
+Codec ID                                 : A_AC3
+Duration                                 : 59 s 968 ms
+Bit rate mode                            : Constant
+Bit rate                                 : 192 kb/s
+Channel(s)                               : 2 channels
+Channel layout                           : L R
+Sampling rate                            : 48.0 kHz
+Frame rate                               : 31.250 FPS (1536 SPF)
+Compression mode                         : Lossy
+Stream size                              : 1.37 MiB (2%)
+Service kind                             : Complete Main
+Default                                  : Yes
+Forced                                   : No
+
+Text
+ID                                       : 3
+Format                                   : ASS
+Codec ID                                 : S_TEXT/ASS
+Codec ID/Info                            : Advanced Sub Station Alpha
+Duration                                 : 29 s 0 ms
+Bit rate                                 : 115 b/s
+Count of elements                        : 6
+Compression mode                         : Lossless
+Stream size                              : 418 Bytes (0%)
+Default                                  : Yes
+Forced                                   : No
