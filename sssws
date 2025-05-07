@@ -1,0 +1,130 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <sstream>
+#include <array>
+
+using namespace std;
+
+// Function to evaluate expression (like "2+0+2+4")
+int evaluateExpression(const string& expr) {
+    stringstream ss(expr);
+    int sum = 0, num;
+    char op;
+    while (ss >> num) {
+        sum += num;
+        ss >> op; // ignore the '+' operator
+    }
+    return sum;
+}
+
+// Function to get '+' positions for sorting tie-breaker
+vector<int> getPlusPositions(const string& expr, const string& num) {
+    vector<int> positions;
+    int gapIndex = 0; // gap index: between num[0] and num[1] => 0, and so on
+
+    int posInExpr = 0;
+    for (int i = 0; i < num.size() - 1; ++i) {
+        // move through expr to see if there's a '+' between num[i] and num[i+1]
+        while (posInExpr < expr.size() && expr[posInExpr] != num[i]) posInExpr++;
+        posInExpr++; // move past current digit
+
+        if (posInExpr < expr.size() && expr[posInExpr] == '+') {
+            positions.push_back(gapIndex); // this gap has '+'
+        }
+
+        gapIndex++;
+    }
+    return positions;
+}
+
+int main() {
+    
+    int t;
+    cin>>t;
+    while(t--){
+        
+    int m;
+    cin>>m;
+    string num ;
+    cin>>num;
+    int n = num.length();
+    
+    int total = 1 << (n - 1); // 2^(n-1) combinations (since n-1 is the number of gaps between digits)
+    vector<tuple<int, vector<int>, string>> expressions;
+
+    // Generate all possible combinations of '+' placements
+    for (int mask = 0; mask < total; ++mask) {
+        string expr;
+        for (int i = 0; i < n; ++i) {
+            expr += num[i];
+            if (i < n - 1 && (mask & (1 << (n - 2 - i)))) {
+                expr += '+'; // add '+' if the corresponding bit is set
+            }
+        }
+        int sum = evaluateExpression(expr);  // evaluate sum of the expression
+        vector<int> plusPos = getPlusPositions(expr, num);  // get '+' positions for sorting
+        expressions.emplace_back(sum, plusPos, expr); // store sum, positions and expression
+    }
+
+    // Sort expressions: first by sum, then by the positions of '+'
+   sort(expressions.begin(), expressions.end(), [](const tuple<int, vector<int>, string>& a, const tuple<int, vector<int>, string>& b) {
+    int sumA = get<0>(a);
+    int sumB = get<0>(b);
+    if (sumA != sumB) return sumA < sumB;
+
+    const vector<int>& posA = get<1>(a);
+    const vector<int>& posB = get<1>(b);
+
+    const int maxGaps = 10;
+    array<bool, maxGaps> hasPlusA{}, hasPlusB{};
+
+    for (int idx : posA) hasPlusA[idx] = true;
+    for (int idx : posB) hasPlusB[idx] = true;
+
+    for (int i = 0; i < maxGaps; ++i) {
+        if (hasPlusA[i] != hasPlusB[i]) {
+            return hasPlusA[i];
+        }
+    }
+
+    return false;
+});
+
+    // Output all sorted expressions
+    cout << "Sorted Expressions:\n";
+    for (int i = 0; i < expressions.size(); ++i) {
+        cout << i << ": " << get<2>(expressions[i]) << " = " << get<0>(expressions[i]) << endl;
+    }
+
+    // Selected indices (you can change this later)
+    vector<int> selectedIndices;
+    
+    for(int i = 0; i <m;i++){
+        int input;
+        cin>>input;
+        selectedIndices.push_back(input-1);
+    }
+    // Example selected indices
+
+    int totalSum = 0;
+    int totalPlus = 0;
+    cout << "\nSelected Expressions:\n";
+    for (int idx : selectedIndices) {
+        if (idx >= 0 && idx < expressions.size()) {
+            auto [sum, _, expr] = expressions[idx];
+            cout << expr << " = " << sum << endl;
+            totalSum += sum;
+            
+             totalPlus += count(expr.begin(), expr.end(), '+');
+        } else {
+            cout << "Index " << idx << " is out of range.\n";
+        }
+    }
+
+    cout << "Total Sum of Selected Expressions: " << totalSum << " " << totalPlus << endl;
+}
+
+    return 0;
+}
