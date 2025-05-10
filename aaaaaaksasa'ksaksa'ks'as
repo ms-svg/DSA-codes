@@ -1,0 +1,97 @@
+#include <iostream>
+#include <vector>
+#include <set>
+#include <algorithm>
+using namespace std;
+
+
+int calculateScore( std::vector<int> albert,  std::vector<int> bob) {
+    int score = 0;
+    int M = albert.size();
+    
+    cout << " size " << M << endl;
+    for (int i = 0; i < M; ++i) {
+        int a = albert[i], b = bob[i];
+        cout << " elements are " << a << " " << b << endl;
+        if (a * b < 0) {  // Opposite signs
+            score++;
+            cout << " yes " << endl;
+        } else if ((a > 0 && b > 0) || (a < 0 && b < 0)) {
+            if (std::abs(a) > std::abs(b)){
+                cout << " sss " << endl;
+                score++;
+            }
+        }
+    }
+    
+    cout <<" called " << score << endl;
+    return score;
+}
+
+
+
+void solve() {
+    int N, M;
+    std::cin >> N >> M;
+
+    std::vector<int> albert(N);
+    std::set<int> full_range;
+
+    // Fill range from -N to -1 and 1 to N
+    for (int i = 1; i <= N; ++i) {
+        full_range.insert(i);
+        full_range.insert(-i);
+    }
+
+    // Read Albert's vector and remove from full range
+    for (int i = 0; i < N; ++i) {
+        std::cin >> albert[i];
+        full_range.erase(albert[i]);
+    }
+
+    // Bob's vector = remaining elements
+    std::vector<int> bob(full_range.begin(), full_range.end());
+
+    // We only need combinations of size M (same as Albert's size)
+    std::vector<int> bob_subset;
+    std::vector<std::vector<int>> results;
+
+    // Generate all permutations of Bob's elements taken M at a time
+    std::sort(bob.begin(), bob.end());
+    std::vector<bool> select(bob.size(), false);
+    std::fill(select.begin(), select.begin() + N, true);
+
+    do {
+        bob_subset.clear();
+        for (size_t i = 0; i < bob.size(); ++i) {
+            if (select[i]) bob_subset.push_back(bob[i]);
+        }
+
+        // For each selection, permute it
+        do {
+            std::cout << "Pairing:\n";
+            for (int i = 0; i < N; ++i) {
+                std::cout << "(" << albert[i] << ", " << bob_subset[i] << ") ";
+            }
+            vector<int> test1 = albert;
+            vector<int> test2 = bob;
+             int score = calculateScore(test1, test2);
+            
+            if(score == M){
+                cout << " +1" << endl;
+            }
+            
+            std::cout << "\n";
+        } while (std::next_permutation(bob_subset.begin(), bob_subset.end()));
+
+    } while (std::prev_permutation(select.begin(), select.end()));
+}
+
+int main() {
+    int t;
+    std::cin >> t;
+    while (t--) {
+        solve();
+    }
+    return 0;
+}
